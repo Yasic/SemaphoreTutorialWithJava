@@ -1,5 +1,7 @@
 # 前言
 
+[原文地址：信号量与PV操作的Java讲解](https://yasicyu.com/newarticle/%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8EPV%E6%93%8D%E4%BD%9C%E7%9A%84Java%E8%AE%B2%E8%A7%A3)
+
 信号量（Semaphore）是由 Edsger Dijkstra 在 设计 THE Multiprogramming System 时提出的一种概念，用以解决进程通信或线程通信时的同步与互斥问题，主要包含两种操作， P 操作和 V 操作。
 
 提到信号量就必须提到并发编程，并发是一种在时间上将多个逻辑控制流进行重叠的机制，也是现代计算机系统最显著和重要的特性。
