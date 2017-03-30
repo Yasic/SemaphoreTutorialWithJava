@@ -1,6 +1,6 @@
 # 前言
 
-[原文地址：信号量与PV操作的Java讲解](https://yasicyu.com/newarticle/%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8EPV%E6%93%8D%E4%BD%9C%E7%9A%84Java%E8%AE%B2%E8%A7%A3)
+[原文地址：信号量与 PV 操作的 Java 讲解](https://yasicyu.com/newarticle/%E4%BF%A1%E5%8F%B7%E9%87%8F%E4%B8%8EPV%E6%93%8D%E4%BD%9C%E7%9A%84Java%E8%AE%B2%E8%A7%A3)
 
 信号量（Semaphore）是由 Edsger Dijkstra 在 设计 THE Multiprogramming System 时提出的一种概念，用以解决进程通信或线程通信时的同步与互斥问题，主要包含两种操作， P 操作和 V 操作。
 
@@ -138,9 +138,9 @@ public void addMoney(){
 其实这里对于 money 变量自增一的操作就带来了线程安全问题。
 
 > 根据《Java Concurrency in Practice》的定义，一个线程安全的 class 应当满足以下三个条件：
-• 多个线程同时访问时，其表现出正确的行为。
-• 无论操作系统如何调度这些线程， 无论这些线程的执行顺序如何交织（interleaving）。
-• 调用端代码无须额外的同步或其他协调动作。
+> • 多个线程同时访问时，其表现出正确的行为。
+> • 无论操作系统如何调度这些线程， 无论这些线程的执行顺序如何交织（interleaving）。
+> • 调用端代码无须额外的同步或其他协调动作。
 
 而这里对 money 自增一的操作并不是原子操作，也就是说不是 __不可分割的操作__ ，之所以这样说是因为在 Java 中变量自增一其实经历了 "读取-修改-写入" 三个步骤
 
@@ -321,7 +321,7 @@ V(S) //资源解锁
 
 同样的，PV 操作有一个很苛刻的条件就是原子性，即 PV 操作是不可以被中断的，一般在操作系统中会通过 __关中断__ 来实现原子性，关中断是指禁止处理机响应中断源的中断请求，可以通过硬件或执行一条“关中断”指令来实现。
 
-在偏应用层的编程语言中，比如 Java，会屏蔽掉底层的中断细节，对于共享变量的互斥保护转而以更强大和的封装去代替，比如在 Java 中提供了锁机制，有对象锁和类锁，有 synchronized 关键字，因此接下来的实现代码中对于 PV 操作我们会使用这些机制来保证其原子性，主要还是为了最终的实现效果。
+在偏应用层的编程语言中，比如 Java，会屏蔽掉底层的中断细节，对于共享变量的互斥保护转而以更强大、更安全和更灵活的封装函数去代替，比如在 Java 中提供了锁机制，有对象锁和类锁，有 synchronized 关键字，因此接下来的实现代码中对于 PV 操作我们会使用这些机制来保证其原子性，主要还是为了最终的实现效果。
 
 # 信号量的运用
 
@@ -538,7 +538,7 @@ public class SynchronizationSemaphore {
 
 ### 隐藏的互斥问题
 
-其实这个问题很隐蔽，让我们回忆下整个过程，我们虽然用 PV 操作确保了 save 时仓库一定有空闲位，take 时仓库一定有存储位，但是 saveGoodThread 线程和 takeGoodThread 线程对于仓库的操作都涉及到一个变量 usedSize，正是这个小变量没有被保护，所以带来了一个隐蔽的互斥问题，根据上一部分的讲解，其实解决方式也很简单，我们在 SynchronizationSemaphore 中增加一个互斥锁变量 mutex，具体如下
+其实这个问题很隐蔽，让我们回忆下整个过程，我们虽然用 PV 操作确保了 save 时仓库一定有空闲位，take 时仓库一定有存储位，但是 saveGoodThread 线程和 takeGoodThread 线程对于仓库的操作都涉及到一个变量 usedSize，正是这个小变量没有被保护，所以带来了一个隐藏的互斥问题，根据上一部分的讲解，其实解决方式也很简单，我们在 SynchronizationSemaphore 中增加一个互斥锁变量 mutex，具体如下
 
 ```Java
 public class SynchronizationSemaphore {
@@ -670,7 +670,7 @@ P(mutex)
 take()
 
 V(mutex)
-V(used)
+V(idle)
 ```
 
 这里也有一个问题，对于 mutex 值的操作是否必须要在 used 和 idle 操作之间呢，比如是否可以进行如下顺序操作呢？
